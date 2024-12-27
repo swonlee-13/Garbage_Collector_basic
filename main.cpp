@@ -64,7 +64,13 @@ private:
           chrono::duration_cast<chrono::seconds>(now - block.allocationTime)
               .count();
       if (duration >= 1) {
-        free(block.address);
+        if (block.address != nullptr) { // nullptr 체크
+          try {
+            free(block.address);
+          } catch (...) {
+            cout << "Failed to free memory at " << block.address << endl;
+          }
+        }
       } else {
         newBlocks.push_back(block);
       }
@@ -129,7 +135,13 @@ public:
     }
 
     for (const auto &block : memoryBlocks) {
-      free(block.address);
+      if (block.address != nullptr) {
+        try {
+          free(block.address);
+        } catch (...) {
+          cout << "Failed to free memory at " << block.address << endl;
+        }
+      }
     }
     memoryBlocks.clear();
   }
@@ -253,4 +265,3 @@ int main() {
 
   return 0;
 }
-
